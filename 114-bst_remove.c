@@ -47,6 +47,19 @@ void replace_node_with_successor(bst_t **root, bst_t *node)
 }
 
 /**
+ * one_child - handles the case when node has one child
+ * @node: node
+ * @child: right OR left child of node
+ */
+void one_child(bst_t *node, bst_t *child)
+{
+	child->parent = node->parent;
+	if (node == node->parent->right)
+		node->parent->right = child;
+	else
+		node->parent->left = child;
+}
+/**
  * bst_remove - a function that removes a node from a Binary Search Tree
  * @root: a pointer to the root node of the tree
  * @value: the value to remove in the tree
@@ -69,13 +82,14 @@ bst_t *bst_remove(bst_t *root, int value)
 			}
 			else if (node->left && node->parent)
 			{
-				node->left->parent = node->parent;
-				if (node == node->parent->right)
-					node->parent->right = node->left;
-				else
-					node->parent->left = node->left;
+				one_child(node, node->left);
 			}
-			else if (node->left && !node->parent)
+			else if (node->right && node->parent)
+			{
+				one_child(node, node->right);
+			}
+
+			else if ((node->left || node->right) && !node->parent)
 			{
 				node->left->parent = NULL;
 				root = node->left;
